@@ -74,7 +74,7 @@ function showData(){
   productsUnorderedList.innerHTML = '';
   let sorted = Products.allProducts.sort( ( a, b ) => ( b.viewCount > a.viewCount ? 1 : -1 ) );
   console.log( sorted );
-  for ( let i = 1 ; i < sorted.length ; i++ ) {
+  for ( let i = 0 ; i < sorted.length ; i++ ) {
     let productsList = document.createElement( 'li' );
     productsList.innerHTML = `${sorted[i].productName} : had ${sorted[i].clicks} Votes, and was seen${sorted[i].viewCount} times.`;
     productsUnorderedList.appendChild( productsList );
