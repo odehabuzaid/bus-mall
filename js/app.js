@@ -23,8 +23,6 @@ for( let i = 0; i < fileNames.length; i++ ) {
   new Products( fileNames[i].split( '.' )[0], fileNames[i] );
 }
 function randomNumber( min, max ) {
-  min = Math.ceil( min );
-  max = Math.floor( max );
   return Math.floor( Math.random() * ( max - min + 1 ) + min );
 }
 function render() {
@@ -102,13 +100,13 @@ function productsChart() {
       datasets: [{
         label: 'Clicks',
         data: clicks,
-        backgroundColor:['#2F4F4F','#2F4F4F','#2F4F4F','#2F4F4F','#2F4F4F','#2F4F4F','#2F4F4F','#2F4F4F','#2F4F4F','#2F4F4F','#2F4F4F','#2F4F4F','#2F4F4F','#2F4F4F','#2F4F4F','#2F4F4F','#2F4F4F','#2F4F4F','#2F4F4F' ] ,
+        backgroundColor: '#2F4F4F',
         borderWidth: 1,
       }
       , {
         label: 'Views',
         data: views,
-        backgroundColor: ['#B8860B','#B8860B','#B8860B','#B8860B','#B8860B','#B8860B','#B8860B','#B8860B','#B8860B','#B8860B','#B8860B','#B8860B','#B8860B','#B8860B','#B8860B','#B8860B','#B8860B','#B8860B','#B8860B'],
+        backgroundColor: '#B8860B',
         borderWidth: 1
       }]
     },
