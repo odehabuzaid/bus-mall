@@ -9,7 +9,7 @@ let secondImage = document.getElementById( 'secondImg' );
 let thirdImage = document.getElementById( 'thirdImg' );
 let imgContainer = document.getElementById( 'imgContainer' );
 let btnShowData = document.getElementById( 'btnShowData' );
-let productsUnorderedList = document.getElementById( 'productsUnorderedList' );
+
 let rounds  = 25;
 let Products = function( productName, imageUrl ) {
   this.productName = productName;
@@ -35,6 +35,7 @@ function render() {
   if ( ( currentVIewIndex.includes( leftIndex ) || currentVIewIndex.includes( midIndex ) ) || currentVIewIndex.includes( rightIndex ) ) {
     render();
   }else{
+
     firstImage.src = Products.allProducts[leftIndex].imageUrl;
     secondImage.src = Products.allProducts[midIndex].imageUrl;
     thirdImage.src = Products.allProducts[rightIndex].imageUrl;
@@ -45,7 +46,10 @@ function render() {
     currentVIewIndex.push( leftIndex,midIndex,rightIndex );
   }
 }
+
 imgContainer.addEventListener( 'click', clickPerformed );
+
+
 function clickPerformed( e ){
   if( ( ( e.target.id === 'firstImg' || e.target.id === 'secondImg' ) || e.target.id === 'thirdImg' ) && rounds > 0 ){
     switch ( e.target.id ) {
@@ -64,11 +68,18 @@ function clickPerformed( e ){
     render();
     rounds--;
     // console.log( rounds );
-  }else if ( rounds <= 0 ){btnShowData.style.display = 'inline';}
+  }else if ( rounds <= 0 ){
+    btnShowData.style.display = 'inline';
+    firstImage.classList.remove( 'zoom' );
+    secondImage.classList.remove( 'zoom' );
+    thirdImage.classList.remove( 'zoom' );
+    thirdImage.setAttribute.classList.remove( 'zoom' );
+  }
 }
 btnShowData.style.display = 'none';
 btnShowData.addEventListener( 'click', showData );
 function showData(){
+  let productsUnorderedList = document.getElementById( 'productsUnorderedList' );
   productsUnorderedList.innerHTML = '';
   let sorted = Products.allProducts.sort( ( a, b ) => ( b.viewCount > a.viewCount ? 1 : -1 ) );
   console.log( sorted );
@@ -80,9 +91,10 @@ function showData(){
     btnShowData.removeEventListener( 'click', showData );
     btnShowData.style.display = 'none';
   }
+  let chartdiv = document.getElementsByClassName( 'chart' )[0];
+  chartdiv.classList.add( 'slided' );
   productsChart();
 }
-
 function productsChart() {
   let products = [];
   let clicks = [];
@@ -93,7 +105,8 @@ function productsChart() {
     views.push( Products.allProducts[i].viewCount );
   }
   let ctx = document.getElementById( 'Chart' ).getContext( '2d' );
-  let myChart = new Chart( ctx, {
+  // eslint-disable-next-line no-undef
+  new Chart( ctx, {
     type: 'bar',
     data: {
       labels: products,
@@ -123,5 +136,4 @@ function productsChart() {
     }
   } );
 }
-
 render();
