@@ -9,19 +9,19 @@ let secondImage = document.getElementById( 'secondImg' );
 let thirdImage = document.getElementById( 'thirdImg' );
 let imgContainer = document.getElementById( 'imgContainer' );
 let btnShowData = document.getElementById( 'btnShowData' );
+let btnClearData = document.getElementById( 'btnClearData' );
+let btnRestartSurvay = document.getElementById( 'btnRestartSurvay' );
 
 let rounds  = 25;
-let Products = function( productName, imageUrl ) {
+let Products = function( productName, imageUrl ,clicks,viewCount ) {
   this.productName = productName;
   this.imageUrl = `./assets/${imageUrl}`;
-  this.clicks = 0;
-  this.viewCount = 0;
+  this.clicks = clicks;
+  this.viewCount = viewCount;
   Products.allProducts.push( this );
 };
 Products.allProducts = [];
-for( let i = 0; i < fileNames.length; i++ ) {
-  new Products( fileNames[i].split( '.' )[0], fileNames[i] );
-}
+
 function randomNumber( min, max ) {
   return Math.floor( Math.random() * ( max - min + 1 ) + min );
 }
@@ -35,7 +35,6 @@ function render() {
   if ( ( currentVIewIndex.includes( leftIndex ) || currentVIewIndex.includes( midIndex ) ) || currentVIewIndex.includes( rightIndex ) ) {
     render();
   }else{
-
     firstImage.src = Products.allProducts[leftIndex].imageUrl;
     secondImage.src = Products.allProducts[midIndex].imageUrl;
     thirdImage.src = Products.allProducts[rightIndex].imageUrl;
@@ -46,54 +45,59 @@ function render() {
     currentVIewIndex.push( leftIndex,midIndex,rightIndex );
   }
 }
-
 imgContainer.addEventListener( 'click', clickPerformed );
-
-
 function clickPerformed( e ){
-  if( ( ( e.target.id === 'firstImg' || e.target.id === 'secondImg' ) || e.target.id === 'thirdImg' ) && rounds > 0 ){
+  if( rounds > 0 ){
     switch ( e.target.id ) {
     case 'firstImg':
-      Products.allProducts[currentVIewIndex[0]].clicks++;
+      Products.allProducts[currentVIewIndex[0]].clicks++; render(); rounds--;
       break;
     case 'secondImg':
-      Products.allProducts[currentVIewIndex[1]].clicks++;
+      Products.allProducts[currentVIewIndex[1]].clicks++; render(); rounds--;
       break;
     case 'thirdImg':
-      Products.allProducts[currentVIewIndex[2]].clicks++;
+      Products.allProducts[currentVIewIndex[2]].clicks++; render(); rounds--;
       break;
     default:
       break;
     }
-    render();
-    rounds--;
-    // console.log( rounds );
   }else if ( rounds <= 0 ){
-    btnShowData.style.display = 'inline';
+    imgContainer.removeEventListener( 'click', clickPerformed );
+    btnShowData.style.display = 'inline-flex';
     firstImage.classList.remove( 'zoom' );
     secondImage.classList.remove( 'zoom' );
     thirdImage.classList.remove( 'zoom' );
-    thirdImage.setAttribute.classList.remove( 'zoom' );
   }
 }
+
 btnShowData.style.display = 'none';
+btnClearData.style.display = 'none';
+btnRestartSurvay.style.display = 'none';
 btnShowData.addEventListener( 'click', showData );
+btnClearData.addEventListener( 'click', clearData );
+btnRestartSurvay.addEventListener( 'click', restartSurvay );
+function clearData(){
+  localStorage.clear();
+}
+function restartSurvay(){
+  location.reload();
+}
 function showData(){
   let productsUnorderedList = document.getElementById( 'productsUnorderedList' );
   productsUnorderedList.innerHTML = '';
   let sorted = Products.allProducts.sort( ( a, b ) => ( b.viewCount > a.viewCount ? 1 : -1 ) );
-  console.log( sorted );
   for ( let i = 0 ; i < sorted.length ; i++ ) {
     let productsList = document.createElement( 'li' );
-    productsList.innerHTML = `${sorted[i].productName} : had ${sorted[i].clicks} Votes, and was seen${sorted[i].viewCount} times.`;
+    productsList.innerHTML = `${sorted[i].productName} : had ${sorted[i].clicks} Votes, and was seen ${sorted[i].viewCount} times.`;
     productsUnorderedList.appendChild( productsList );
-    imgContainer.removeEventListener( 'click', clickPerformed );
-    btnShowData.removeEventListener( 'click', showData );
     btnShowData.style.display = 'none';
+    btnClearData.style.display = 'inline-flex';
+    btnRestartSurvay.style.display = 'inline-flex';
   }
   let chartdiv = document.getElementsByClassName( 'chart' )[0];
   chartdiv.classList.add( 'slided' );
   productsChart();
+  localStorage.setItem( 'products', JSON.stringify( sorted ) );
 }
 function productsChart() {
   let products = [];
@@ -136,4 +140,23 @@ function productsChart() {
     }
   } );
 }
-render();
+
+function getData() {
+  let data = JSON.parse( localStorage.getItem( 'products' ) );
+  if( data ) {
+    btnClearData.style.display = 'inline-flex';
+    btnRestartSurvay.style.display = 'inline-flex';
+
+    for( let i = 0; i < data.length; i++ ) {
+      new Products( data[i].productName,( ( data[i].imageUrl ).replace( './assets/', '' ) ) , data[i].clicks, data[i].viewCount );
+    }
+    render(); console.log( Products.allProducts );
+    showData();
+  }else {
+    for( let i = 0; i < fileNames.length; i++ ) {
+      new Products( fileNames[i].split( '.' )[0], fileNames[i],0,0 );
+    }
+    render();
+  }
+}
+getData();
