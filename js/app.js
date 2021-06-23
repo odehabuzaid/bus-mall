@@ -61,6 +61,7 @@ function clickPerformed( e ){
     default:
       break;
     }
+    localStorage.setItem( 'products', JSON.stringify( Products.allProducts ) );
   }else if ( rounds <= 0 ){
     imgContainer.removeEventListener( 'click', clickPerformed );
     btnShowData.style.display = 'inline-flex';
